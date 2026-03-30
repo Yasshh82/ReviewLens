@@ -1,7 +1,7 @@
 from google_play_scraper import reviews, Sort
 import pandas as pd
 
-def fetch_reviews(app_id, count: int = 100) -> pd.DataFrame:
+def fetch_reviews(app_id, count: int = 300) -> pd.DataFrame:
     """
     Fetch reviews from Google Play Store and return a DataFrame
     """
