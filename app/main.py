@@ -1,6 +1,7 @@
 import sys
 import os
 import streamlit as st
+import spacy.cli
 from src.scraper import fetch_reviews
 from src.preprocess import clean_reviews
 from src.sentiment import add_sentiment
@@ -14,6 +15,11 @@ from src.visualization import plot_sentiment_distribution, plot_sentiment_trend,
 from src.utils import generate_insights, compare_apps
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+try:
+    spacy.load("en_core_web_sm")
+except:
+    spacy.cli.download("en_core_web_sm")
 
 st.set_page_config(page_title="ReviewLens", layout="wide")
 
