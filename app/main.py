@@ -1,6 +1,8 @@
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import streamlit as st
+import spacy
 import spacy.cli
 from src.scraper import fetch_reviews
 from src.preprocess import clean_reviews
@@ -14,12 +16,7 @@ from src.nlp_pipeline import (
 from src.visualization import plot_sentiment_distribution, plot_sentiment_trend, plot_comparison_sentiment
 from src.utils import generate_insights, compare_apps
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-try:
-    spacy.load("en_core_web_sm")
-except:
-    spacy.cli.download("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm")
 
 st.set_page_config(page_title="ReviewLens", layout="wide")
 
