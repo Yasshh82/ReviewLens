@@ -9,6 +9,7 @@ from src.nlp_pipeline import (
     extract_action_phrases
 )
 from src.visualization import plot_sentiment_distribution
+from src.utils import generate_insights
 
 st.set_page_config(page_title="ReviewLens", layout="wide")
 
@@ -38,6 +39,11 @@ if st.sidebar.button("Analyze"):
         complaints = extract_complaints(docs, df['sentiment'])
         action_phrases = extract_action_phrases(docs)
 
+        positive_phrases = [p for p in action_phrases if p[1] > 1]
+        negative_phrases = complaints
+
+        insights = generate_insights(positive_phrases, negative_phrases)
+
         st.success(f"Analyzed {len(df)} reviews!")
 
         col1, col2 = st.columns(2)
@@ -66,6 +72,12 @@ if st.sidebar.button("Analyze"):
         with col5:
             st.subheader("Complaints")
             st.write(complaints)
+
+        # Insights Section
+        st.subheader("💡 Key Insights")
+
+        for insight in insights:
+            st.markdown(f"- {insight}")
 
         # Download
         st.subheader("Export Data")

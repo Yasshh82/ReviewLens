@@ -8,6 +8,26 @@ COMMON_NOISE = {
     "this problem", "everything", "something"
 }
 
+def normalize_phrase(phrase):
+    replacements = {
+        "issue": "problem",
+        "issues": "problem",
+        "error": "problem",
+        "errors": "problem",
+        "fail": "failure",
+        "failed": "failure",
+        "bug": "problem",
+        "bugs": "problem"
+    }
+
+    words = phrase.split()
+    normalized = [replacements.get(w, w) for w in words]
+
+    return " ".join(normalized)
+
+def filter_phrases(counter, min_count=2):
+    return [(p, c) for p, c in counter if c >= min_count]
+
 @st.cache_resource
 def load_nlp():
     try:
@@ -38,9 +58,11 @@ def extract_keywords(docs, top_n=15):
             if any(token.pos_ == "PRON" for token in chunk):
                 continue
 
-            phrases.append(text)
-
-    return Counter(phrases).most_common(top_n)
+            normalized = normalize_phrase(text)
+            phrases.append(normalized)
+    
+    counter = Counter(phrases).most_common(top_n)
+    return filter_phrases(counter)
 
 def extract_action_phrases(docs, top_n=15):
     phrases = []
@@ -50,13 +72,16 @@ def extract_action_phrases(docs, top_n=15):
 
             if token.pos_ == "ADJ" and token.head.pos_ == "NOUN":
                 phrase = f"{token.text} {token.head.text}"
-                phrases.append(phrase.lower())
+                normalized = normalize_phrase(phrase)
+                phrases.append(normalized)
 
             if token.dep_ == "compound" and token.head.pos_ == "NOUN":
                 phrase = f"{token.text} {token.head.text}"
-                phrases.append(phrase.lower())
+                normalized = normalize_phrase(phrase)
+                phrases.append(normalized)
 
-    return Counter(phrases).most_common(top_n)
+    counter = Counter(phrases).most_common(top_n)
+    return filter_phrases(counter)
 
 def extract_complaints(docs, sentiments, top_n=10):
     complaints = []
@@ -72,6 +97,8 @@ def extract_complaints(docs, sentiments, top_n=10):
                     phrase = f"{token.text} {token.head.text}"
 
                     if phrase not in COMMON_NOISE:
-                        complaints.append(phrase.lower())
+                        normalized = normalize_phrase(phrase.lower())
+                        complaints.append(normalized)
 
-    return Counter(complaints).most_common(top_n)
+    counter = Counter(complaints).most_common(top_n)
+    return filter_phrases(counter)

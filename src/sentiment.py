@@ -1,14 +1,29 @@
 import pandas as pd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import streamlit as st
 
+@st.cache_resource
+def load_sentiment_analyzer():
+    try:
+        return SentimentIntensityAnalyzer()
+    except Exception as e:
+        st.error(f"Error loading sentiment analyzer: {e}")
+        raise
+
+analyzer = load_sentiment_analyzer()
 
 def add_sentiment(df: pd.DataFrame) -> pd.DataFrame:
-    def get_sentiment(rating):
-        if rating >= 4:
-            return "positive"
-        elif rating == 3:
-            return "neutral"
-        else:
-            return "negative"
+    sentiments = []
 
-    df['sentiment'] = df['rating'].apply(get_sentiment)
+    for text in df['review']:
+        score = analyzer.polarity_scores(text)['compound']
+
+        if score >= 0.05:
+            sentiments.append("positive")
+        elif score <= -0.05:
+            sentiments.append("negative")
+        else:
+            sentiments.append("neutral")
+
+    df['sentiment'] = sentiments
     return df
