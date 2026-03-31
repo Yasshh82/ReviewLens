@@ -10,7 +10,7 @@ from src.nlp_pipeline import (
     extract_complaints, 
     extract_action_phrases
 )
-from src.visualization import plot_sentiment_distribution, plot_sentiment_trend
+from src.visualization import plot_sentiment_distribution, plot_sentiment_trend, plot_comparison_sentiment
 from src.utils import generate_insights, compare_apps
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -138,6 +138,9 @@ if st.button("Compare Apps"):
         with col2:
             st.subheader(f"{app2} Sentiment")
             st.write(df2['sentiment'].value_counts())
+
+        fig = plot_comparison_sentiment(df1, df2, app1, app2)
+        st.pyplot(fig)
 
         st.subheader("Unique Issues Comparison")
 

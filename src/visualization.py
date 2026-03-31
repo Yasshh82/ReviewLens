@@ -29,3 +29,28 @@ def plot_sentiment_trend(df):
     ax.set_ylabel("Number of Reviews")
 
     return fig
+
+def plot_comparison_sentiment(df1, df2, app1, app2):
+
+    counts1 = df1['sentiment'].value_counts()
+    counts2 = df2['sentiment'].value_counts()
+
+    labels = ['positive', 'neutral', 'negative']
+
+    values1 = [counts1.get(label, 0) for label in labels]
+    values2 = [counts2.get(label, 0) for label in labels]
+
+    x = range(len(labels))
+
+    fig, ax = plt.subplots()
+
+    ax.bar([i - 0.2 for i in x], values1, width=0.4, label=app1)
+    ax.bar([i + 0.2 for i in x], values2, width=0.4, label=app2)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_title("App Sentiment Comparison")
+    ax.set_ylabel("Number of Reviews")
+    ax.legend()
+
+    return fig

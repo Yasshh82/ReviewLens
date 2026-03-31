@@ -8,6 +8,12 @@ COMMON_NOISE = {
     "this problem", "everything", "something"
 }
 
+NEGATIVE_WORDS = {
+    "bad", "slow", "worst", "poor", "terrible",
+    "lag", "issue", "problem", "error", "fail",
+    "crash", "bug", "delay", "annoying", "broken"
+}
+
 def normalize_phrase(phrase):
     replacements = {
         "issue": "problem",
@@ -94,11 +100,23 @@ def extract_complaints(docs, sentiments, top_n=10):
 
                 # ADJ + NOUN pattern
                 if token.pos_ == "ADJ" and token.head.pos_ == "NOUN":
-                    phrase = f"{token.text} {token.head.text}"
+                    phrase = f"{token.text} {token.head.text}".lower()
 
-                    if phrase not in COMMON_NOISE:
-                        normalized = normalize_phrase(phrase.lower())
-                        complaints.append(normalized)
+                    # if phrase not in COMMON_NOISE:
+                    #     normalized = normalize_phrase(phrase.lower())
+                    #     complaints.append(normalized)
+
+                    if token.text.lower() in NEGATIVE_WORDS:
+                        complaints.append(phrase)
+
+                if token.pos_ == "NOUN" and token.text.lower() in NEGATIVE_WORDS:
+                    if token.i > 0:
+                        prev = doc[token.i - 1].text
+                        phrase = f"{prev} {token.text}".lower()
+                    else:
+                        phrase = token.text.lower()
+                    
+                    complaints.append(phrase)
 
     counter = Counter(complaints).most_common(top_n)
     return filter_phrases(counter)
