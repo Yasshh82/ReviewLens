@@ -2,7 +2,7 @@ import streamlit as st
 from src.scraper import fetch_reviews
 from src.preprocess import clean_reviews
 from src.sentiment import add_sentiment
-from src.nlp_pipeline import process_reviews, extract_keywords, extract_complaints
+from src.nlp_pipeline import process_reviews, extract_keywords, extract_complaints, extract_action_phrases
 
 st.title("ReviewLens🔍")
 
@@ -24,6 +24,7 @@ if st.button("Analyze"):
 
         keywords = extract_keywords(docs)
         complaints = extract_complaints(docs, df['sentiment'])
+        action_phrases = extract_action_phrases(docs)
 
         st.success(f"Analyzed {len(df)} reviews!")
 
@@ -34,6 +35,9 @@ if st.button("Analyze"):
 
         st.subheader("Top Complaints")
         st.write(complaints)
+
+        st.subheader("Actionable Phrases")
+        st.write(action_phrases)
 
     else:
         st.warning("Please enter a valid App ID.")
