@@ -10,3 +10,12 @@ def generate_insights(positive_phrases, negative_phrases):
         insights.append(f"⚠️ Users complain about {top_negative}")
 
     return insights
+
+def compare_apps(complaints1, complaints2):
+    set1 = set([c[0] for c in complaints1])
+    set2 = set([c[0] for c in complaints2])
+
+    unique_to_app1 = set1 - set2
+    unique_to_app2 = set2 - set1
+
+    return unique_to_app1, unique_to_app2
