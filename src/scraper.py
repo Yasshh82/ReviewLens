@@ -13,11 +13,23 @@ def fetch_reviews(app_id, count: int = 500) -> pd.DataFrame:
         sort=Sort.NEWEST,
         count=count
     )
+    if not result:
+        raise ValueError("No reviews fetched. App may not exist or is restricted.")
 
     df = pd.DataFrame(result)
 
-    df = df[['content', 'score', 'at']]
+    column_map = {
+        "content": "review",
+        "score": "rating",
+        "at": "date"
+    }
 
-    df.columns = ['review', 'rating', 'date']
+    available_cols = [col for col in column_map.keys() if col in df.columns]
+
+    if len(available_cols) < 3:
+        raise ValueError(f"Unexpected API response. Columns found: {list(df.columns)}")
+
+    df = df[available_cols]
+    df.rename(columns=column_map, inplace=True)
 
     return df

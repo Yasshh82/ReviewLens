@@ -38,7 +38,11 @@ def load_data(app_id):
 if st.sidebar.button("Analyze"):
 
     if app_id:
-        df = load_data(app_id)
+        try:
+            df = load_data(app_id)
+        except Exception as e:
+            st.error(f"⚠️ Failed to fetch reviews: {e}")
+            st.stop()
 
         docs = process_reviews(df['review'].tolist())
 
