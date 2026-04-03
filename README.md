@@ -1,4 +1,4 @@
-# ReviewLens 🔍
+# ReviewLens 🔍 [(Click here for app)](https://reviewlens.streamlit.app/)
 
 ## 🚀 Overview
 ReviewLens is an AI-powered app review analysis tool that extracts meaningful insights from user reviews on the Google Play Store. It helps identify user sentiments, recurring complaints, strengths, and trends, enabling better product decisions.
